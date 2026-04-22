@@ -1,0 +1,57 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python bytecode/cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+thesis_env/
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pyre/
+.hypothesis/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code workspace-local settings
+.vscode/
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+
+# Office/backup artifacts
+~$*.docx
+*.bak
+*.swp
+*.swo
+
+# Build/distribution artifacts
+build/
+dist/
+*.egg-info/
+
+# Local secrets/environment files
+.env
+.env.*
+
+# Node-related caches (if used by frontend experiments)
+node_modules/
+.npm/
