@@ -729,7 +729,7 @@ def generate_sociotechnical_dashboard(output_dir):
         }
 
         .viz-panel header {
-            padding: 6px 14px 8px;
+            padding: 2px 14px 4px;
             border-bottom: 0;
             background: transparent;
         }
@@ -741,7 +741,7 @@ def generate_sociotechnical_dashboard(output_dir):
         }
 
         .viz-panel p {
-            margin: 6px 0 0;
+            margin: 2px 0 0;
             color: var(--muted);
             font-size: 0.9rem;
         }
