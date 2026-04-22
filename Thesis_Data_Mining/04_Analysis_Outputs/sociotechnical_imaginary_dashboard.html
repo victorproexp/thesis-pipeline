@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Sociotechnical Imaginary of AI in Education</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --bg-elev: #162338;
+            --bg-soft: #1f2f4a;
+            --text: #e7edf8;
+            --muted: #aebcd4;
+            --accent: #79d7c2;
+            --accent-2: #f0c36d;
+            --border: rgba(255, 255, 255, 0.14);
+            --shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            background: var(--bg);
+            font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.55;
+        }
+
+        .container {
+            width: min(1440px, 94vw);
+            margin: 0 auto;
+            padding: 32px 0 48px;
+        }
+
+        .hero {
+            background: linear-gradient(145deg, rgba(31, 47, 74, 0.9), rgba(22, 35, 56, 0.94));
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 26px 26px 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .kicker {
+            font-size: 0.84rem;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(1.5rem, 1.9vw + 1rem, 2.35rem);
+            line-height: 1.15;
+        }
+
+        .hero p {
+            margin: 12px 0 0;
+            color: var(--muted);
+            max-width: 95ch;
+            font-size: 0.99rem;
+        }
+
+        .lens-grid {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .lens-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 14px;
+        }
+
+        .lens-card h2 {
+            margin: 0 0 6px;
+            color: var(--accent-2);
+            font-size: 1rem;
+        }
+
+        .lens-card p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .viz-grid {
+            margin-top: 12px;
+            display: grid;
+            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            gap: 18px;
+            align-items: start;
+            width: 100%;
+            margin-left: 0;
+        }
+
+        .right-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .viz-panel {
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            overflow: visible;
+            box-shadow: none;
+        }
+
+        .viz-panel header {
+            padding: 6px 14px 8px;
+            border-bottom: 0;
+            background: transparent;
+        }
+
+        .viz-panel h3 {
+            margin: 0;
+            font-size: 1rem;
+            line-height: 1.25;
+        }
+
+        .viz-panel p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        iframe {
+            display: block;
+            width: 100%;
+            height: 920px;
+            border: 0;
+            background: var(--bg);
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .heatmap-frame {
+            height: 1880px;
+        }
+
+        .graph-frame {
+            height: 920px;
+        }
+
+        .synthesis {
+            margin-top: 0;
+            background: var(--bg-elev);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .synthesis h4 {
+            margin: 0 0 8px;
+            color: var(--accent-2);
+            font-size: 1rem;
+        }
+
+        .synthesis ul {
+            margin: 0;
+            padding-left: 18px;
+            color: var(--muted);
+            font-size: 0.93rem;
+        }
+
+        .meta {
+            margin-top: 12px;
+            color: var(--muted);
+            font-size: 0.84rem;
+        }
+
+        @media (max-width: 1120px) {
+            .lens-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .viz-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            iframe {
+                height: 900px;
+            }
+
+            .heatmap-frame {
+                height: 1780px;
+            }
+
+            .graph-frame {
+                height: 900px;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                width: 95vw;
+                padding: 20px 0 34px;
+            }
+
+            .hero {
+                padding: 20px 16px;
+            }
+
+            iframe {
+                height: 840px;
+            }
+
+            .heatmap-frame {
+                height: 1680px;
+            }
+
+            .graph-frame {
+                height: 840px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <section class="hero">
+            <div class="kicker">Analytical Figure Dashboard</div>
+            <h1>The Sociotechnical Imaginary of AI in Education</h1>
+            <p>
+                This page integrates lexical value salience and topic-network structure across Anthropic, Google, and Microsoft documents in the 2023 to 2026 corpus.
+                The analytical framing follows the thesis lens: sociotechnical imaginaries as publicly performed visions, expectational gaps between what is and what ought to be,
+                and the connector-complementor tension in higher-education governance.
+            </p>
+
+            <div class="lens-grid">
+                <article class="lens-card">
+                    <h2>Sociotechnical Imaginary</h2>
+                    <p>
+                        Recurring value language and topic emphasis are interpreted as institutionally stabilized visions of desirable educational futures.
+                    </p>
+                </article>
+                <article class="lens-card">
+                    <h2>Expectational Gap</h2>
+                    <p>
+                        Weak representation of democratic public values is contrasted with strong infrastructural and performance-oriented framing.
+                    </p>
+                </article>
+                <article class="lens-card">
+                    <h2>Issue Management Dynamics</h2>
+                    <p>
+                        Discursive positioning is assessed in relation to potential, imminent, current, and critical issue stages around legitimacy and regulation.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="viz-grid" aria-label="Combined visualization area">
+            <article class="viz-panel">
+                <header>
+                    <h3>Democratic Public Values Lexical Heatmap</h3>
+                    <p>Normalized term frequency per 1,000 tokens across corporate narratives (company-level corpus normalization).</p>
+                </header>
+                <iframe id="heatmapFrame" class="heatmap-frame" src="company_values_heatmap.html" title="Company values heatmap" scrolling="no"></iframe>
+            </article>
+
+            <div class="right-stack">
+                <article class="viz-panel">
+                    <header>
+                        <h3>Company Topic Knowledge Graph</h3>
+                        <p>Company-topic coupling by discourse share and average topic probability.</p>
+                    </header>
+                    <iframe id="graphFrame" class="graph-frame" src="knowledge_graph.html" title="Company topic knowledge graph" scrolling="no"></iframe>
+                </article>
+
+                <section class="synthesis">
+                    <h4>Interpretive Guide and Analytical Limits</h4>
+                    <ul>
+                        <li>The heatmap indicates which democratic public values are foregrounded, backgrounded, or effectively absent by company.</li>
+                        <li>The graph locates where these value patterns are anchored in broader topical clusters such as security, governance, productivity, and policy.</li>
+                        <li>Strong infrastructural framing combined with weak public-value emphasis is treated as a candidate value-conformance gap in Mahon's sense.</li>
+                        <li>Lexical frequency is interpreted as discursive salience, not as direct evidence of organizational commitment or implementation outcomes.</li>
+                        <li>Findings should be triangulated with qualitative close reading, given differences in document genre and publication format across firms.</li>
+                    </ul>
+                    <div class="meta">
+                        Context alignment: Jasanoff and Kim (2015), Marginson (2011), van Dijck et al. (2018), Coombs (2021), Mahon (2022), Mager and Katzenbach (2021).
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>
