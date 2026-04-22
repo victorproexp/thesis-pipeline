@@ -1,0 +1,162 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 800px;
+                 background-color: #1a1a2e;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            
+    <div style="position:absolute;top:12px;left:12px;background:rgba(26,26,46,0.92);
+                padding:14px 18px;border-radius:8px;font-family:system-ui,sans-serif;
+                color:#ccc;font-size:12px;line-height:1.7;z-index:10;
+                border:1px solid rgba(255,255,255,0.1);">
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:6px;">
+        Company–Topic Knowledge Graph
+      </div>
+      <div><span style="color:#4285F4;">●</span> Google &nbsp;
+           <span style="color:#00A4EF;">●</span> Microsoft &nbsp;
+           <span style="color:#D97757;">●</span> Anthropic &nbsp;
+           <span style="color:#C4A7E7;">●</span> Topic</div>
+      <div style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;">
+        Node size = discourse volume / doc count<br>
+        Edge thickness = avg. probability × discourse share<br>
+        Edge color = company affiliation<br>
+        ⟨ ⟩ = democratic public values terms (Marginson)
+      </div>
+    </div>
+    
+        <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#4285F4", "font": {"color": "white"}, "id": "Google", "label": "Google", "shape": "dot", "size": 30.0, "title": "Google\n17 documents\n101,932 words"}, {"color": "#00A4EF", "font": {"color": "white"}, "id": "Microsoft", "label": "Microsoft", "shape": "dot", "size": 55.0, "title": "Microsoft\n18 documents\n184,226 words"}, {"color": "#D97757", "font": {"color": "white"}, "id": "Anthropic", "label": "Anthropic", "shape": "dot", "size": 31.749823802464334, "title": "Anthropic\n37 documents\n107,692 words"}, {"color": "#C4A7E7", "font": {"color": "white"}, "id": 0, "label": "T0\nsecurity \u00b7 policy \u00b7 privacy \u00b7 safety \u00b7 secure\n\u27e8security, privacy, safety\u27e9", "shape": "dot", "size": 54.6, "title": "Topic 0 (33 docs)\n  security (0.420)\n  policy (0.368)\n  privacy (0.351)\n  safety (0.327)\n  secure (0.295)\n  critical thinking (0.285)\n  implement (0.283)\n  future (0.273)\n\nValues terms: security, privacy, safety"}, {"color": "#C4A7E7", "font": {"color": "white"}, "id": 1, "label": "T1\nsecurity \u00b7 governance \u00b7 gdpr \u00b7 safety \u00b7 policy\n\u27e8security, governance, safety, privacy\u27e9", "shape": "dot", "size": 42.599999999999994, "title": "Topic 1 (23 docs)\n  security (0.396)\n  governance (0.367)\n  gdpr (0.359)\n  safety (0.331)\n  policy (0.322)\n  privacy (0.314)\n  capability (0.312)\n  compliance (0.299)\n\nValues terms: security, governance, safety, privacy"}, {"color": "#C4A7E7", "font": {"color": "white"}, "id": 2, "label": "T2\ngenerative \u00b7 productivity \u00b7 development \u00b7 research \u00b7 engineer", "shape": "dot", "size": 33.0, "title": "Topic 2 (15 docs)\n  generative (0.354)\n  productivity (0.333)\n  development (0.319)\n  research (0.310)\n  engineer (0.276)\n  study (0.275)\n  future (0.272)\n  occupation (0.272)\n\nNo values terms in top keywords"}]);
+                  edges = new vis.DataSet([{"color": "#4285F4", "from": "Google", "title": "Google \u2192 Topic 0\nAvg. probability: 52%\nDocuments: 17\nDiscourse share: 25.9%", "to": 0, "value": 40.022370760899584}, {"color": "#4285F4", "from": "Google", "title": "Google \u2192 Topic 1\nAvg. probability: 30%\nDocuments: 17\nDiscourse share: 25.9%", "to": 1, "value": 23.012303336595373}, {"color": "#00A4EF", "from": "Microsoft", "title": "Microsoft \u2192 Topic 0\nAvg. probability: 38%\nDocuments: 18\nDiscourse share: 46.8%", "to": 0, "value": 53.24832555795428}, {"color": "#00A4EF", "from": "Microsoft", "title": "Microsoft \u2192 Topic 1\nAvg. probability: 32%\nDocuments: 18\nDiscourse share: 46.8%", "to": 1, "value": 44.718935957015724}, {"color": "#00A4EF", "from": "Microsoft", "title": "Microsoft \u2192 Topic 2\nAvg. probability: 30%\nDocuments: 18\nDiscourse share: 46.8%", "to": 2, "value": 42.09184884286155}, {"color": "#D97757", "from": "Anthropic", "title": "Anthropic \u2192 Topic 0\nAvg. probability: 38%\nDocuments: 37\nDiscourse share: 27.3%", "to": 0, "value": 31.439072092427008}, {"color": "#D97757", "from": "Anthropic", "title": "Anthropic \u2192 Topic 1\nAvg. probability: 33%\nDocuments: 37\nDiscourse share: 27.3%", "to": 1, "value": 27.270618746702503}, {"color": "#D97757", "from": "Anthropic", "title": "Anthropic \u2192 Topic 2\nAvg. probability: 27%\nDocuments: 37\nDiscourse share: 27.3%", "to": 2, "value": 22.469167113173285}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"enabled": true, "solver": "forceAtlas2Based", "forceAtlas2Based": {"gravitationalConstant": -250, "centralGravity": 0.008, "springLength": 350, "springConstant": 0.04, "damping": 0.5, "avoidOverlap": 0.8}, "stabilization": {"iterations": 400, "fit": true}}, "edges": {"smooth": {"type": "continuous"}, "scaling": {"min": 1, "max": 18}}, "interaction": {"hover": true, "tooltipDelay": 100, "zoomView": true, "dragNodes": true, "dragView": true}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    
+    <script type="text/javascript">
+      // After the network stabilizes, turn off physics so dragging is instant
+      document.addEventListener("DOMContentLoaded", function() {
+        var checkNetwork = setInterval(function() {
+          if (typeof network !== 'undefined') {
+            clearInterval(checkNetwork);
+            network.on("stabilized", function() {
+              network.setOptions({physics: {enabled: false}});
+            });
+          }
+        }, 100);
+      });
+    </script>
+    
+</body>
+</html>

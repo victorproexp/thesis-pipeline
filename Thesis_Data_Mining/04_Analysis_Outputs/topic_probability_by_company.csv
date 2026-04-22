@@ -1,0 +1,10 @@
+Company,Topic,Avg_Probability,Doc_Count
+Google,0,0.5155,11
+Google,1,0.2964,3
+Google,2,0.1482,3
+Microsoft,0,0.3795,8
+Microsoft,1,0.3187,5
+Microsoft,2,0.3,5
+Anthropic,0,0.3833,14
+Anthropic,1,0.3324,15
+Anthropic,2,0.2739,7

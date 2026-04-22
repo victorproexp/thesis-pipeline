@@ -1,0 +1,2 @@
+doc_count,num_topics_excl_noise,noise_docs,noise_ratio,topic_balance_entropy_norm,mean_topic_word_jaccard,mean_max_topic_probability,silhouette_cosine_non_noise,davies_bouldin_non_noise
+72,3,1,0.013888888888888888,0.9554742926524104,0.12037037037037036,0.7976893468055555,0.05378436447032412,4.248889788414651

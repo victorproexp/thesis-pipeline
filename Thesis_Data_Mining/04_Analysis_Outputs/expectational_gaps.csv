@@ -1,0 +1,15 @@
+Company,Absent_Term,Count,Per1kTokens
+Google,autonomy,1,0.01
+Google,oversight,3,0.03
+Google,democratic,0,0.0
+Google,openness,1,0.01
+Microsoft,democratic,3,0.02
+Microsoft,openness,1,0.01
+Microsoft,inclusion,5,0.03
+Microsoft,wellbeing,6,0.03
+Microsoft,participation,8,0.04
+Anthropic,equity,2,0.02
+Anthropic,democratic,4,0.04
+Anthropic,fairness,2,0.02
+Anthropic,inclusion,1,0.01
+Anthropic,diversity,3,0.03

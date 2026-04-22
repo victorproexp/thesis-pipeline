@@ -1,0 +1,73 @@
+Company,Level,FileName,DocumentType,PublicationYear,WordCount,URL
+Google,Level_1_Macro,ai-principles-2023-progress-update.pdf,Document,2023,12604,https://ai.google/static/documents/ai-principles-2023-progress-update.pdf
+Google,Level_1_Macro,ai-responsibility-update-published-february-2025.pdf,Document,2025,6308,https://ai.google/static/documents/ai-responsibility-update-published-february-2025.pdf
+Microsoft,Level_1_Macro,Responsible-AI-Transparency-Report-2025-vertical.pdf,Report,2025,19817,https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/msc/documents/presentations/CSR/Responsible-AI-Transparency-Report-2025-vertical.pdf
+Microsoft,Level_1_Macro,sfi-nov-2025-progress-report.pdf,Report,2025,14187,https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/bade/documents/products-and-services/en-us/security/sfi-nov-2025-progress-report.pdf#page=1
+Anthropic,Level_1_Macro,Third-party testing as a key ingredient of AI policy \ Anthropic.pdf,Blog Post,2024,3820,https://www.anthropic.com/news/third-party-testing
+Anthropic,Level_1_Macro,Charting a Path to AI Accountability \ Anthropic.pdf,Blog Post,2023,940,https://www.anthropic.com/news/charting-a-path-to-ai-accountability
+Anthropic,Level_1_Macro,Introducing The Anthropic Institute \ Anthropic.pdf,Blog Post,2026,873,https://www.anthropic.com/news/the-anthropic-institute
+Anthropic,Level_1_Macro,"Core Views on AI Safety: When, Why, What, and How \ Anthropic.pdf",Blog Post,2023,6601,https://www.anthropic.com/news/core-views-on-ai-safety
+Anthropic,Level_1_Macro,The Long-Term Benefit Trust \ Anthropic.pdf,Blog Post,2023,2049,https://www.anthropic.com/news/the-long-term-benefit-trust
+Anthropic,Level_1_Macro,"Thoughts on the US Executive Order, G7 Code of Conduct, and Bletchley Park Summit \ Anthropic.pdf",Blog Post,2023,1013,https://www.anthropic.com/news/policy-recap-q4-2023
+Anthropic,Level_1_Macro,Progress from our Frontier Red Team \ Anthropic.pdf,Blog Post,2025,1756,https://www.anthropic.com/news/strategic-warning-for-ai-risk-progress-and-insights-from-our-frontier-red-team
+Anthropic,Level_1_Macro,claudes-constitution_webPDF_26-02.02a.pdf,Document,2026,29541,https://www-cdn.anthropic.com/d0636f72a9493d279ed36b33987da3430bcb5911/claudes-constitution_webPDF_26-02.02a.pdf
+Google,Level_3_Micro,gfe_guide_to_ai_in_education.pdf,Guide/Toolkit,2026,3080,https://services.google.com/fh/files/misc/gfe_guide_to_ai_in_education.pdf
+Google,Level_3_Micro,shrinking_the_ai_gap_chronicle.pdf,Document,2024,2803,https://www.gstatic.com/bricks/pdf/742f1234-e10f-45c3-b4db-ea1b3a9e8747/shrinking_the_ai_gap_chronicle.pdf
+Google,Level_3_Micro,google_teaching_responsible_ai.pdf,Document,2023,5096,https://services.google.com/fh/files/misc/google_teaching_responsible_ai.pdf
+Google,Level_3_Micro,7814.pdf,Document,2024,5407,https://storage.googleapis.com/gweb-research2023-media/pubtools/7814.pdf
+Google,Level_3_Micro,guardians_guide_to_ai_in_education.pdf,Guide/Toolkit,2025,2317,https://services.google.com/fh/files/misc/guardians_guide_to_ai_in_education.pdf
+Google,Level_3_Micro,ps_genai_education_ebook.pdf,Guide/Toolkit,2024,1423,https://services.google.com/fh/files/misc/ps_genai_education_ebook.pdf
+Google,Level_3_Micro,1-s2.0-S2468067224000051-main.pdf,Document,2024,5318,https://research.google/pubs/blinkboard-guiding-and-monitoring-circuit-assembly-for-synchronous-and-remote-physical-computing-education/
+Microsoft,Level_3_Micro,Microsoft-Education-AI-Toolkit-EN-GB.pdf,Guide/Toolkit,2024,18647,https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-product-and-services/microsoft-education/downloadables/Microsoft-Education-AI-Toolkit-EN-GB.pdf
+Microsoft,Level_3_Micro,2025-Microsoft-AI-in-Education-Report.pdf,Report,2025,3660,https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/bade/documents/products-and-services/en-us/education/2025-Microsoft-AI-in-Education-Report.pdf
+Microsoft,Level_3_Micro,K-12-IDC-Whitepaper.pdf,White Paper,2025,5247,https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/bade/documents/products-and-services/en-us/education/K-12-IDC-Whitepaper.pdf
+Microsoft,Level_3_Micro,microsoft-trustworthy-ai.pdf,Document,2026,3887,https://marketingassets.microsoft.com/gdc/gdcZ3XOWG/original
+Microsoft,Level_3_Micro,Microsoft-Education-AI-Toolkit1.pdf,Guide/Toolkit,2024,27925,https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-product-and-services/microsoft-education/downloadables/Microsoft-Education-AI-Toolkit1.pdf
+Microsoft,Level_3_Micro,IDC-White-Paper-A-Blueprint-for-AI-Ready-Campuses-Strategies-from-the-Frontlines-of-Higher-Education.pdf,White Paper,2025,5433,https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-product-and-services/microsoft-education/downloadables/IDC-White-Paper-A-Blueprint-for-AI-Ready-Campuses-Strategies-from-the-Frontlines-of-Higher-Education.pdf
+Anthropic,Level_3_Micro,Anthropic and Teach For All launch global AI training initiative for educators \ Anthropic.pdf,Blog Post,2026,891,https://www.anthropic.com/news/anthropic-teach-for-all
+Anthropic,Level_3_Micro,Advancing Claude for Education \ Anthropic.pdf,Blog Post,2025,809,https://www.anthropic.com/news/advancing-claude-for-education
+Anthropic,Level_3_Micro,Anthropic Education Report: How University Students Use Claude \ Anthropic.pdf,Blog Post,2025,2753,https://www.anthropic.com/news/anthropic-education-report-how-university-students-use-claude
+Anthropic,Level_3_Micro,Anthropic Education Report: The AI Fluency Index \ Anthropic.pdf,Report,2026,2223,https://www.anthropic.com/research/AI-fluency-index
+Anthropic,Level_3_Micro,Anthropic launches higher education advisory board and AI Fluency courses \ Anthropic.pdf,Blog Post,2025,784,https://www.anthropic.com/news/anthropic-higher-education-initiatives
+Anthropic,Level_3_Micro,Anthropic education report: How educators use Claude \ Anthropic.pdf,Blog Post,2025,2822,https://www.anthropic.com/news/anthropic-education-report-how-educators-use-claude
+Anthropic,Level_3_Micro,Introducing Claude for education \ Anthropic.pdf,Blog Post,2025,1045,https://www.anthropic.com/news/introducing-claude-for-education
+Google,Level_2_Meso,Google.org 2025 Impact Report.pdf,Report,2025,8080,https://storage.googleapis.com/impact-report-sources-prod/Google.org%202025%20Impact%20Report.pdf
+Google,Level_2_Meso,AI_Opportunity_Agenda.pdf,Document,2023,5766,https://storage.googleapis.com/gweb-uniblog-publish-prod/documents/AI_Opportunity_Agenda.pdf
+Google,Level_2_Meso,future_of_learning.pdf,Document,2025,5601,https://services.google.com/fh/files/misc/future_of_learning.pdf
+Google,Level_2_Meso,2023_UK_Google_Economic_Impact_Report.pdf,Report,2023,16134,https://kstatic.googleusercontent.com/files/3b26a4852a311281ca84da75d9b3617197c5473d68317e8b492de69a9494dcc0a2d17421e8dfe9c3a84ff0742bc2aad745fb792d745b26543e814ae1cd3541ab
+Google,Level_2_Meso,3545945.3569725.pdf,Document,2023,5478,https://dl.acm.org/doi/pdf/10.1145/3545945.3569725
+Google,Level_2_Meso,economic_report_2024.pdf,Report,2024,8045,https://storage.googleapis.com/eir-national-report/2024.pdf
+Google,Level_2_Meso,Google_Agentspace_for_Education_E-Book.pdf,Guide/Toolkit,2026,2911,https://static.carahsoft.com/concrete/files/9917/6280/6986/Google_Agentspace_for_Education_E-Book.pdf
+Google,Level_2_Meso,3545945.3569789.pdf,Document,2023,5561,https://dl.acm.org/doi/pdf/10.1145/3545945.3569725
+Microsoft,Level_2_Meso,New-Future-Of-Work-Report-2025.pdf,Report,2025,18235,https://www.microsoft.com/en-us/research/wp-content/uploads/2025/12/New-Future-Of-Work-Report-2025.pdf
+Microsoft,Level_2_Meso,lee_2025_ai_critical_thinking_survey.pdf,Document,2025,14004,https://www.microsoft.com/en-us/research/wp-content/uploads/2025/01/lee_2025_ai_critical_thinking_survey.pdf
+Microsoft,Level_2_Meso,GDPR-and-Generative-AI-A-Guide-for-the-Public-Sector-FINAL.pdf,Guide/Toolkit,2024,10214,https://wwps.microsoft.com/wp-content/uploads/2024/04/GDPR-and-Generative-AI-A-Guide-for-the-Public-Sector-FINAL.pdf
+Microsoft,Level_2_Meso,2507.07935v6.pdf,Research Paper,2025,6101,https://arxiv.org/pdf/2507.07935?
+Microsoft,Level_2_Meso,AI-and-Reading-Study.pdf,Document,2025,607,https://cdn-dynmedia-1.microsoft.com/is/content/microsoftcorp/microsoft/final/en-us/microsoft-product-and-services/microsoft-education/downloadables/AI-and-Reading-Study.pdf
+Microsoft,Level_2_Meso,the-ai-decision-brief.pdf,Document,2025,12521,https://info.microsoft.com/ww-landing-ai-decision-brief.html?lcid=en-us
+Microsoft,Level_2_Meso,AI-and-Productivity-Report-First-Edition.pdf,Report,2023,4483,https://www.microsoft.com/en-us/research/wp-content/uploads/2023/12/AI-and-Productivity-Report-First-Edition.pdf
+Microsoft,Level_2_Meso,Societal-AI-Research-Challenges-and-Opportunities.pdf,Document,2025,10194,https://www.microsoft.com/en-us/research/wp-content/uploads/2025/03/Societal-AI-Research-Challenges-and-Opportunities.pdf
+Microsoft,Level_2_Meso,microsoft-sovereign-cloud-in-europe.pdf,Document,2026,3425,https://marketingassets.microsoft.com/gdc/gdcBIiigm/original
+Microsoft,Level_2_Meso,Microsoft_Work_Trend_Report_Without_Appendix.pdf,Report,2024,5639,https://marketingassets.microsoft.com/gdc/gdcAev8aq/original
+Anthropic,Level_2_Meso,Anthropic and Teach For All launch global AI training initiative for educators \ Anthropic.pdf,Blog Post,2026,855,https://www.anthropic.com/news/anthropic-teach-for-all
+Anthropic,Level_2_Meso,Australian government and Anthropic sign MOU for AI safety and research \ Anthropic.pdf,Blog Post,2026,865,https://www.anthropic.com/news/australia-MOU
+Anthropic,Level_2_Meso,Claude is a space to think | Anthropic \ Anthropic.pdf,Blog Post,2026,1217,https://www.anthropic.com/news/claude-is-a-space-to-think
+Anthropic,Level_2_Meso,How scientists are using Claude to accelerate research and discovery \ Anthropic.pdf,Blog Post,2026,2268,https://www.anthropic.com/news/accelerating-scientific-research
+Anthropic,Level_2_Meso,Productivity-Report_03 (1).pdf,Report,2025,5080,https://www-cdn.anthropic.com/e5645986a7ce8fbcc48fa6d2fc67753c87642c30.pdf
+Anthropic,Level_2_Meso,Launching the Anthropic Economic Futures Programme in the UK and Europe \ Anthropic.pdf,Blog Post,2025,833,https://www.anthropic.com/news/economic-futures-uk-europe
+Anthropic,Level_2_Meso,Anthropic and Iceland announce one of the world’s first national AI education pilots \ Anthropic.pdf,Blog Post,2025,746,https://www.anthropic.com/news/anthropic-and-iceland-announce-one-of-the-world-s-first-national-ai-education-pilots
+Anthropic,Level_2_Meso,Economic-Index_v4_2026.01.14_g.pdf,Document,2026,14178,https://www-cdn.anthropic.com/096d94c1a91c6480806d8f24b2344c7e2a4bc666.pdf
+Anthropic,Level_2_Meso,Sydney will become Anthropic’s fourth office in Asia-Pacific \ Anthropic.pdf,Blog Post,2026,444,https://www.anthropic.com/news/sydney-fourth-office-asia-pacific
+Anthropic,Level_2_Meso,Anthropic partners with the UK Government to bring AI assistance to GOV.UK services \ Anthropic.pdf,Blog Post,2026,766,https://www.anthropic.com/news/gov-UK-partnership
+Anthropic,Level_2_Meso,How AI Is Transforming Work at Anthropic \ Anthropic.pdf,Document,2025,6846,https://www.anthropic.com/research/how-ai-is-transforming-work-at-anthropic
+Anthropic,Level_2_Meso,Anthropic partners with Rwandan Government and ALX to bring AI education to hundreds of thousands of learners across Africa \ Anthropic.pdf,Blog Post,2025,970,https://www.anthropic.com/news/rwandan-government-partnership-ai-education
+Anthropic,Level_2_Meso,Anthropic opens Bengaluru office and announces new partnerships across India \ Anthropic.pdf,Blog Post,2026,1215,https://www.anthropic.com/news/bengaluru-office-partnerships-across-india
+Anthropic,Level_2_Meso,2601.20245v2.pdf,Research Paper,2026,2617,https://arxiv.org/pdf/2601.20245
+Anthropic,Level_2_Meso,Anthropic and the Government of Rwanda sign MOU for AI in health and education \ Anthropic.pdf,Blog Post,2026,473,https://www.anthropic.com/news/anthropic-rwanda-mou
+Anthropic,Level_2_Meso,Anthropic partners with CodePath to bring Claude to the US’s largest collegiate computer science program \ Anthropic.pdf,Blog Post,2026,646,https://www.anthropic.com/news/anthropic-codepath-partnership
+Anthropic,Level_2_Meso,Anthropic is donating $20 million to Public First Action \ Anthropic.pdf,Blog Post,2026,672,https://www.anthropic.com/news/donate-public-first-action
+Anthropic,Level_2_Meso,Anthropic invests $100 million into the Claude Partner Network \ Anthropic.pdf,Blog Post,2026,857,https://www.anthropic.com/news/claude-partner-network
+Anthropic,Level_2_Meso,A statement from Dario Amodei on Anthropic's commitment to American AI leadership \ Anthropic.pdf,Blog Post,2025,1332,https://www.anthropic.com/news/statement-dario-amodei-american-ai-leadership
+Anthropic,Level_2_Meso,Anthropic joins White House pledge for AI education \ Anthropic.pdf,Blog Post,2025,752,https://www.anthropic.com/news/anthropic-signs-pledge-to-americas-youth-investing-in-ai-education
+Anthropic,Level_2_Meso,Nowcasting_Econ-Report-v16.pdf,Report,2026,4457,https://cdn.sanity.io/files/4zrzovbb/website/2b5bbaf2c1eb81dbf6e6fb813c1a24e35a64d376.pdf
+Anthropic,Level_2_Meso,Detecting and preventing distillation attacks \ Anthropic.pdf,Blog Post,2026,1683,https://www.anthropic.com/news/detecting-and-preventing-distillation-attacks
