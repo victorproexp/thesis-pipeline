@@ -1,5 +1,7 @@
 Topic,Count,Name,Representation
 -1,1,-1_data_analysis_context_method assess,"['data', 'analysis', 'context', 'method', 'assess', 'evaluation', 'reasoning', 'language', 'pattern', 'indicator']"
-0,33,0_security_policy_privacy_safety,"['security', 'policy', 'privacy', 'safety', 'secure', 'critical', 'thinking', 'implement', 'future', 'information']"
+0,30,0_security_policy_privacy_safety,"['security', 'policy', 'privacy', 'safety', 'secure', 'responsible', 'critical', 'thinking', 'implement', 'future']"
 1,23,1_security_governance_gdpr_safety,"['security', 'governance', 'gdpr', 'safety', 'policy', 'privacy', 'capability', 'compliance', 'engineering', 'industry']"
-2,15,2_generative_productivity_development_research,"['generative', 'productivity', 'development', 'research', 'engineer', 'study', 'future', 'occupation', 'information', 'conversation']"
+2,12,2_generative_productivity_collaboration_development,"['generative', 'productivity', 'collaboration', 'development', 'research', 'applicability', 'capability', 'gain', 'engineer', 'study']"
+3,3,3_computing_computing research_virtual reality_researcher,"['computing', 'research', 'virtual', 'reality', 'researcher', 'program', 'community', 'design', 'future', 'mentorship']"
+4,3,4_program_innovation_data_organization,"['program', 'innovation', 'data', 'organization', 'research', 'developer', 'skill', 'internet', 'googlers', 'cloud']"

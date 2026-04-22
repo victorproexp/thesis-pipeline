@@ -195,15 +195,15 @@ if __name__ == "__main__":
     embedding_model = SentenceTransformer("all-mpnet-base-v2")
 
     umap_model = UMAP(
-        n_neighbors=12,        # Tuned: reduces over-fragmentation while preserving separation
+        n_neighbors=10,        # Tuned: improves local separation and topic granularity
         n_components=5,
-        min_dist=0.30,         # Tuned: smoother manifold for more stable topic grouping
+        min_dist=0.24,         # Tuned: tighter manifold to split broad mixed clusters
         metric="cosine",
         random_state=42
     )
 
     hdbscan_model = HDBSCAN(
-        min_cluster_size=4,    # Tuned: controls tiny clusters while keeping noise low
+        min_cluster_size=3,    # Tuned: allows smaller coherent clusters with low noise
         min_samples=1,         # Relaxed from 2 → minimises noise assignment for borderline docs
         metric="euclidean",
         cluster_selection_method="eom",
@@ -236,7 +236,7 @@ if __name__ == "__main__":
         umap_model=umap_model,
         hdbscan_model=hdbscan_model,
         calculate_probabilities=True,
-        min_topic_size=5,      # Tuned: favors broader, interpretable topics over fragmented ones
+        min_topic_size=4,      # Tuned: preserves meaningful subtopics instead of over-merging
         top_n_words=10,        # Explicitly set top words to extract
         verbose=True
     )
