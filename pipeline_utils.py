@@ -616,7 +616,7 @@ def generate_sociotechnical_dashboard(output_dir):
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>The Sociotechnical Imaginary of AI in Education</title>
+    <title>The Sociotechnical Imaginary of AI in Higher Education</title>
     <style>
         :root {
             --bg: #1a1a2e;
@@ -842,7 +842,7 @@ def generate_sociotechnical_dashboard(output_dir):
     <main class="container">
         <section class="hero">
             <div class="kicker">Analytical Figure Dashboard</div>
-            <h1>The Sociotechnical Imaginary of AI in Education</h1>
+            <h1>The Sociotechnical Imaginary of AI in Higher Education</h1>
             <p>
                 This page integrates lexical value salience and topic-network structure across Anthropic, Google, and Microsoft documents in the 2023 to 2026 corpus.
                 The analytical framing follows the thesis lens: sociotechnical imaginaries as publicly performed visions, expectational gaps between what is and what ought to be,
