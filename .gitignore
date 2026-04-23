@@ -55,3 +55,7 @@ dist/
 # Node-related caches (if used by frontend experiments)
 node_modules/
 .npm/
+
+# Thesis corpus PDFs (not for GitHub)
+Thesis_Data_Mining/**/*.pdf
+Excluded_Documents_Low_Relevance/**/*.pdf

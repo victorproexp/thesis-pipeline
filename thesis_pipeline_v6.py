@@ -29,40 +29,9 @@ from pipeline_utils import (
     read_finder_comment,
 )
 
-# ==========================================
-# CORPUS CONSTRUCTION: INCLUSION CRITERIA
-# ==========================================
-# As per methodology section: systematic corpus with explicit inclusion criteria
-# to ensure validity and address sampling bias concerns.
-#
-# INCLUSION CRITERIA:
-#   - Time Window: January 2023 – April 2026 (Post-ChatGPT era)
-#   - Document Types: Official white papers, strategic reports, policy-oriented
-#     blog posts from official company channels
-#   - Relevance: Explicit mention of "Education", "Higher Education", 
-#     or "Academic" contexts
-#   - Source: Official company channels only (blogs, research pages, 
-#     policy pages)
-#
-# SAMPLING STRATEGY:
-#   - NO artificial parity enforced: Corpus reflects actual company output
-#   - All documents meeting criteria are included
-#   - Proportional differences in company output are preserved as data
-#   - Weighting in analysis (word count + topic probability) normalizes
-#     for natural imbalances
-#
-# RATIONALE:
-#   Small equal samples (5 docs/level) are vulnerable to selection bias.
-#   By including all relevant documents and weighting proportionally,
-#   we let the data speak to actual communicative scope and emphasis.
-
-INCLUSION_CRITERIA = {
-    "time_window": "2023-01-01 to 2026-04-30",
-    "document_types": ["white_papers", "strategic_reports", "policy_blog_posts"],
-    "relevance_keywords": ["education", "higher education", "academic"],
-    "sources": ["official_blogs", "research_pages", "policy_pages"],
-    "note": "Inclusion criteria document ensures transparency and defensibility."
-}
+# Corpus methodology is specified in the thesis text.
+# This script keeps only executable constraints (for example year filtering)
+# to avoid narrative drift between code comments and the written methodology.
 
 # ==========================================
 # SETUP
