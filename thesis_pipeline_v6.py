@@ -65,7 +65,8 @@ brand_stopwords = [
     # These terms dominate many documents and can flatten topic labels.
     'education', 'educational', 'academia', 'academic', 'learning', 
     'teaching', 'student', 'educator', 'principal', 'technology', 
-    'university', 'document'
+    'university', 'document', 'program', 'generative', 'topic',
+    'software',
 ]
 
 

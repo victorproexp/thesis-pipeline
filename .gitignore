@@ -39,6 +39,8 @@ htmlcov/
 
 # Office/backup artifacts
 ~$*.docx
+thesis.docx
+thesis.pdf
 *.bak
 *.swp
 *.swo

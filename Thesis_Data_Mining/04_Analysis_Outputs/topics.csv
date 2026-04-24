@@ -1,7 +1,7 @@
 Topic,Count,Name,Representation
--1,1,-1_data_analysis_context_method assess,"['data', 'analysis', 'context', 'method', 'assess', 'evaluation', 'reasoning', 'language', 'pattern', 'indicator']"
-0,30,0_security_policy_privacy_safety,"['security', 'policy', 'privacy', 'safety', 'secure', 'responsible', 'critical', 'thinking', 'implement', 'future']"
-1,23,1_security_governance_gdpr_safety,"['security', 'governance', 'gdpr', 'safety', 'policy', 'privacy', 'capability', 'compliance', 'engineering', 'industry']"
-2,12,2_generative_productivity_collaboration_development,"['generative', 'productivity', 'collaboration', 'development', 'research', 'applicability', 'capability', 'gain', 'engineer', 'study']"
-3,3,3_computing_computing research_virtual reality_researcher,"['computing', 'research', 'virtual', 'reality', 'researcher', 'program', 'community', 'design', 'future', 'mentorship']"
-4,3,4_program_innovation_data_organization,"['program', 'innovation', 'data', 'organization', 'research', 'developer', 'skill', 'internet', 'googlers', 'cloud']"
+-1,2,-1_analysis_technical support_evaluation_architect,"['analysis', 'technical', 'support', 'evaluation', 'architect', 'reasoning', 'certification', 'user', 'might', 'fluency']"
+0,31,0_security_policy_privacy_future,"['security', 'policy', 'privacy', 'future', 'implement', 'safety', 'critical', 'thinking', 'secure', 'information']"
+1,22,1_governance_security_policy_safety,"['governance', 'security', 'policy', 'safety', 'capability', 'gdpr', 'compliance', 'privacy', 'government', 'society']"
+2,12,2_collaboration_productivity_research_development,"['collaboration', 'productivity', 'research', 'development', 'gain', 'engineer', 'information', 'study', 'future', 'data']"
+3,5,3_innovation_developer_data_organization,"['innovation', 'developer', 'data', 'organization', 'research', 'googlers', 'future', 'internet', 'skill', 'community']"
+4,3,4_computing_computing research_mentorship_mentor,"['computing', 'research', 'mentorship', 'mentor', 'researcher', 'community', 'support', 'virtual', 'reality', 'degree']"
