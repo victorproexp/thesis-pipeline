@@ -1,7 +1,7 @@
 Topic,Count,Name,Representation
--1,2,-1_analysis_technical support_evaluation_architect,"['analysis', 'technical', 'support', 'evaluation', 'architect', 'reasoning', 'certification', 'user', 'might', 'fluency']"
-0,31,0_security_policy_privacy_future,"['security', 'policy', 'privacy', 'future', 'implement', 'safety', 'critical', 'thinking', 'secure', 'information']"
-1,22,1_governance_security_policy_safety,"['governance', 'security', 'policy', 'safety', 'capability', 'gdpr', 'compliance', 'privacy', 'government', 'society']"
-2,12,2_collaboration_productivity_research_development,"['collaboration', 'productivity', 'research', 'development', 'gain', 'engineer', 'information', 'study', 'future', 'data']"
-3,5,3_innovation_developer_data_organization,"['innovation', 'developer', 'data', 'organization', 'research', 'googlers', 'future', 'internet', 'skill', 'community']"
-4,3,4_computing_computing research_mentorship_mentor,"['computing', 'research', 'mentorship', 'mentor', 'researcher', 'community', 'support', 'virtual', 'reality', 'degree']"
+-1,12,-1_learning_agent_insight_technology,"['learning', 'agent', 'insight', 'technology', 'generative', 'security', 'education', 'future', 'capability', 'innovation']"
+0,26,0_education_teaching_learning_educator,"['education', 'teaching', 'learning', 'educator', 'educational', 'generative', 'teacher', 'learn', 'instruction', 'academic']"
+1,15,1_agentic_industry_collaboration_future,"['agentic', 'industry', 'collaboration', 'future', 'technology', 'society', 'innovation', 'agent', 'policy', 'security']"
+2,7,2_automation_labor market_productivity gain_productivity,"['automation', 'labor', 'market', 'productivity', 'gain', 'occupation', 'autonomy', 'engineer', 'economic', 'economy']"
+3,5,3_gdpr_security_cybersecurity_governance,"['gdpr', 'security', 'cybersecurity', 'governance', 'cloud', 'infrastructure', 'secure', 'compliance', 'threat', 'actor']"
+4,4,4_innovation_economy_economic_internet,"['innovation', 'economy', 'economic', 'internet', 'technology', 'business', 'data', 'company', 'global', 'billion']"

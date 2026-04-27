@@ -489,6 +489,7 @@ def generate_knowledge_graph(df, topic_model, output_path):
         )
 
     total_corpus_words = sum(company_totals.values()) if company_totals else 1
+    valid_topic_ids = set(int(t) for t in valid["Topic"].tolist())
 
     edge_data = {}
     for _, row in df.iterrows():
@@ -498,6 +499,8 @@ def generate_knowledge_graph(df, topic_model, output_path):
         word_count = int(row["Word_Count"]) if "Word_Count" in row else len(str(row["Processed_Text"]).split())
         probs = row["Topic_Distribution"]
         for topic_id, prob in enumerate(probs):
+            if topic_id not in valid_topic_ids:
+                continue
             key = (company, topic_id)
             if key not in edge_data:
                 edge_data[key] = {"prob_sum": 0.0, "doc_count": 0, "word_sum": 0}
@@ -505,10 +508,13 @@ def generate_knowledge_graph(df, topic_model, output_path):
             edge_data[key]["doc_count"] += 1
             edge_data[key]["word_sum"] += word_count
 
-    threshold_prob = 0.15
+    threshold_prob = 0.12
+    inbound_counts = {topic_id: 0 for topic_id in valid_topic_ids}
+    avg_prob_by_pair = {}
 
     for (company, topic_id), stats in edge_data.items():
         avg_prob = stats["prob_sum"] / stats["doc_count"]
+        avg_prob_by_pair[(company, topic_id)] = avg_prob
         if avg_prob < threshold_prob:
             continue
         discourse_share = stats["word_sum"] / total_corpus_words
@@ -524,6 +530,41 @@ def generate_knowledge_graph(df, topic_model, output_path):
                   f"Avg. probability: {avg_prob:.0%}\n"
                   f"Documents: {stats['doc_count']}\n"
                   f"Discourse share: {discourse_share:.1%}"
+        )
+        inbound_counts[topic_id] += 1
+
+    # Safety net: ensure each topic has at least one incoming company edge.
+    # If thresholding removes all edges to a topic, add the strongest available link.
+    for topic_id in valid_topic_ids:
+        if inbound_counts.get(topic_id, 0) > 0:
+            continue
+
+        candidates = []
+        for (company, tid), stats in edge_data.items():
+            if tid != topic_id:
+                continue
+            avg_prob = avg_prob_by_pair.get((company, tid), 0.0)
+            discourse_share = stats["word_sum"] / total_corpus_words
+            candidates.append((avg_prob, discourse_share, company, stats))
+
+        if not candidates:
+            continue
+
+        avg_prob, discourse_share, company, stats = max(candidates, key=lambda x: x[0])
+        edge_weight = max(0.5, avg_prob * discourse_share * 300)
+        colors = COMPANY_COLORS.get(company, {"edge": "#888888"})
+
+        net.add_edge(
+            company,
+            int(topic_id),
+            value=float(edge_weight),
+            color=colors["edge"],
+            dashes=True,
+            title=f"{company} → Topic {topic_id}\n"
+                  f"Avg. probability: {avg_prob:.0%}\n"
+                  f"Documents: {stats['doc_count']}\n"
+                  f"Discourse share: {discourse_share:.1%}\n"
+                  f"(Fallback edge: strongest available link below threshold)"
         )
 
     net.set_options("""

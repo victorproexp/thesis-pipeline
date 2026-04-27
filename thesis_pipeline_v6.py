@@ -36,8 +36,22 @@ from pipeline_utils import (
 # ==========================================
 # SETUP
 # ==========================================
-random.seed(42)
-np.random.seed(42)
+SEED = 42
+UMAP_N_NEIGHBORS = 14
+UMAP_N_COMPONENTS = 5
+UMAP_MIN_DIST = 0.35
+HDBSCAN_MIN_CLUSTER_SIZE = 4
+HDBSCAN_MIN_SAMPLES = 1
+VECTORIZER_NGRAM_RANGE = (1, 2)
+VECTORIZER_MIN_DF = 3
+VECTORIZER_MAX_DF = 1.0  # Keep disabled to avoid prior c-TF-IDF instability
+TOPIC_MIN_TOPIC_SIZE = 5
+TOPIC_TOP_N_WORDS = 10
+TOPIC_TARGET_COUNT = 6
+ABSENCE_THRESHOLD = 0.05  # Per 1k tokens
+
+random.seed(SEED)
+np.random.seed(SEED)
 
 nltk.download("stopwords", quiet=True)
 nltk.download("wordnet", quiet=True)
@@ -56,17 +70,7 @@ brand_stopwords = [
     # ========== Brand/Product names (filter branding noise) ==========
     'anthropic', 'microsoft', 'google', 'facebook', 'amazon',
     'azure', 'openai', 'deepmind', 'claude', 'gpt', 'gemini',
-    'copilot', 'linkedin', 'palm', 'learnlm', 'llama',
-
-    # ========== Known truncation/OCR artifacts ==========
-    'identi', 'classi', 'cogniti', 'speci', 'uency',
-
-    # ========== Domain-generic high-frequency terms ==========
-    # These terms dominate many documents and can flatten topic labels.
-    'education', 'educational', 'academia', 'academic', 'learning', 
-    'teaching', 'student', 'educator', 'principal', 'technology', 
-    'university', 'document', 'program', 'generative', 'topic',
-    'software',
+    'copilot', 'linkedin', 'palm', 'learnlm', 'llama'
 ]
 
 
@@ -165,16 +169,16 @@ if __name__ == "__main__":
     embedding_model = SentenceTransformer("all-mpnet-base-v2")
 
     umap_model = UMAP(
-        n_neighbors=10,        # Tuned: improves local separation and topic granularity
-        n_components=5,
-        min_dist=0.24,         # Tuned: tighter manifold to split broad mixed clusters
+        n_neighbors=UMAP_N_NEIGHBORS,
+        n_components=UMAP_N_COMPONENTS,
+        min_dist=UMAP_MIN_DIST,
         metric="cosine",
-        random_state=42
+        random_state=SEED
     )
 
     hdbscan_model = HDBSCAN(
-        min_cluster_size=3,    # Tuned: allows smaller coherent clusters with low noise
-        min_samples=1,         # Relaxed from 2 → minimises noise assignment for borderline docs
+        min_cluster_size=HDBSCAN_MIN_CLUSTER_SIZE,
+        min_samples=HDBSCAN_MIN_SAMPLES,
         metric="euclidean",
         cluster_selection_method="eom",
         prediction_data=True
@@ -193,9 +197,9 @@ if __name__ == "__main__":
     
     vectorizer_model = CountVectorizer(
         tokenizer=custom_tokenizer,
-        ngram_range=(1, 2),
-        min_df=2,             # Word must appear in ≥2 documents
-        max_df=1.0,           # Disabled: stopwords handle high-freq noise; avoids BERTopic c-TF-IDF crash
+        ngram_range=VECTORIZER_NGRAM_RANGE,
+        min_df=VECTORIZER_MIN_DF,
+        max_df=VECTORIZER_MAX_DF,
         stop_words=combined_stopwords  # NLTK + minimal brand names
     )
 
@@ -206,8 +210,9 @@ if __name__ == "__main__":
         umap_model=umap_model,
         hdbscan_model=hdbscan_model,
         calculate_probabilities=True,
-        min_topic_size=4,      # Tuned: preserves meaningful subtopics instead of over-merging
-        top_n_words=10,        # Explicitly set top words to extract
+        min_topic_size=TOPIC_MIN_TOPIC_SIZE,
+        nr_topics=TOPIC_TARGET_COUNT,
+        top_n_words=TOPIC_TOP_N_WORDS,
         verbose=True
     )
 
@@ -598,8 +603,6 @@ if __name__ == "__main__":
     # Mahon Type II expectational gap: what companies DON'T say
     # Terms with 0 or near-0 frequency reveal blind spots
     # Threshold: <0.05 per 1k tokens = functionally absent
-
-    ABSENCE_THRESHOLD = 0.05  # per 1k tokens
 
     absence_rows = []
     for company in companies:
