@@ -748,7 +748,7 @@ def generate_sociotechnical_dashboard(output_dir):
         .viz-grid {
             margin-top: 12px;
             display: grid;
-            grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+            grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
             gap: 18px;
             align-items: start;
             width: 100%;
@@ -798,7 +798,7 @@ def generate_sociotechnical_dashboard(output_dir):
         }
 
         .heatmap-frame {
-            height: 1880px;
+            height: 1380px;
         }
 
         .graph-frame {
@@ -847,7 +847,7 @@ def generate_sociotechnical_dashboard(output_dir):
             }
 
             .heatmap-frame {
-                height: 1780px;
+                height: 1320px;
             }
 
             .graph-frame {
@@ -870,7 +870,7 @@ def generate_sociotechnical_dashboard(output_dir):
             }
 
             .heatmap-frame {
-                height: 1680px;
+                height: 1260px;
             }
 
             .graph-frame {
