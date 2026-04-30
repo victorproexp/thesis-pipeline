@@ -7,19 +7,16 @@ import pandas as pd
 # NLP
 import nltk
 from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
 
 # Topic modeling
 from bertopic import BERTopic
 from bertopic.representation import KeyBERTInspired
 from sentence_transformers import SentenceTransformer
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-from sklearn.metrics import silhouette_score, davies_bouldin_score
+from sklearn.feature_extraction.text import CountVectorizer
 from umap import UMAP
 from hdbscan import HDBSCAN
 
 from pipeline_utils import (
-    clean_text,
     mine_pdfs,
     custom_tokenizer,
     postprocess_topics_csv,
@@ -30,7 +27,7 @@ from pipeline_utils import (
 )
 
 # Corpus methodology is specified in the thesis text.
-# This script keeps only executable constraints (for example year filtering)
+# This script keeps only executable constraints (e.g., configuration hyperparameters)
 # to avoid narrative drift between code comments and the written methodology.
 
 # ==========================================
@@ -56,7 +53,6 @@ np.random.seed(SEED)
 nltk.download("stopwords", quiet=True)
 nltk.download("wordnet", quiet=True)
 
-lemmatizer = WordNetLemmatizer()
 
 # HYBRID APPROACH (Statistical Filtering + Minimal Brand Stopwords)
 # Combine aggressive min_df/max_df statistical thresholds with targeted brand-name filtering.
@@ -77,87 +73,40 @@ brand_stopwords = [
 # ==========================================
 # MAIN PIPELINE
 # ==========================================
+# Helper functions for metadata extraction
+def get_finder_comment(filepath):
+    return read_finder_comment(filepath)
+
+def parse_url_and_year_from_comment(comment):
+    if not comment:
+        return "", ""
+
+    cleaned = str(comment).strip().strip('"').strip("'")
+    cleaned = re.sub(r"\s+", " ", cleaned)
+
+    url_match = re.search(r"https?://\S+", cleaned)
+    url = url_match.group(0).rstrip(".,;)\"]") if url_match else ""
+
+    year_match = re.search(r"(20\d{2})(?!.*20\d{2})", cleaned)
+    year = year_match.group(1) if year_match else ""
+    if year and not (2000 <= int(year) <= 2026):
+        year = ""
+
+    return url, year
+
+
 if __name__ == "__main__":
     BASE_DIR = "./Thesis_Data_Mining"
     OUTPUT_DIR = os.path.join(BASE_DIR, "04_Analysis_Outputs")
     EXCLUDED_DIR = "./Excluded_Documents_Low_Relevance"
     os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-    # Methodology enforcement: exclude documents older than 2023 before analysis.
-    STRICT_YEAR_FILTER = True
-
-    def get_finder_comment(filepath):
-        return read_finder_comment(filepath)
-
-    def parse_url_and_year_from_comment(comment):
-        if not comment:
-            return "", ""
-
-        cleaned = str(comment).strip().strip('"').strip("'")
-        cleaned = re.sub(r"\s+", " ", cleaned)
-
-        url_match = re.search(r"https?://\S+", cleaned)
-        url = url_match.group(0).rstrip(".,;)\"]") if url_match else ""
-
-        year_match = re.search(r"(20\d{2})(?!.*20\d{2})", cleaned)
-        year = year_match.group(1) if year_match else ""
-        if year and not (2000 <= int(year) <= 2026):
-            year = ""
-
-        return url, year
-
-    def infer_date_evidence_from_comment(comment, publication_year):
-        """Classify Finder comment evidence quality for audit transparency."""
-        if publication_year:
-            return "finder_comment"
-        return "finder_comment_no_year" if str(comment).strip() else "missing_finder_comment"
-
     # 1. Data extraction
-    year_excluded_df = pd.DataFrame(columns=[
-        "Company", "Level", "FileName", "PublicationYear", "DateEvidence", "URL", "ExclusionReason"
-    ])
     df = mine_pdfs(BASE_DIR)
 
     if df.empty:
         print("No data found.")
         exit()
-
-    # Enforce year-based inclusion rule for the analytical corpus.
-    if STRICT_YEAR_FILTER:
-        pre_filter_count = len(df)
-        comments = df.apply(
-            lambda row: get_finder_comment(
-                os.path.join(BASE_DIR, row['Level'], row['Company'], row['FileName'])
-            ),
-            axis=1
-        )
-        parsed_meta = comments.apply(parse_url_and_year_from_comment)
-        df['CommentURL'] = parsed_meta.apply(lambda x: x[0])
-        df['PublicationYear'] = parsed_meta.apply(lambda x: x[1])
-        df['DateEvidence'] = df.apply(
-            lambda row: infer_date_evidence_from_comment(comments.loc[row.name], row['PublicationYear']),
-            axis=1
-        )
-        excluded_mask = ~df['PublicationYear'].apply(lambda y: str(y).isdigit() and int(y) >= 2023)
-        excluded_df = df[excluded_mask][
-            ['Company', 'Level', 'FileName', 'PublicationYear', 'DateEvidence', 'CommentURL']
-        ].copy()
-        if not excluded_df.empty:
-            excluded_df = excluded_df.rename(columns={'CommentURL': 'URL'})
-            excluded_df['ExclusionReason'] = "PublicationYear before 2023 or missing"
-            year_excluded_df = excluded_df.copy()
-            excluded_path = os.path.join(OUTPUT_DIR, "corpus_excluded_by_year.csv")
-            excluded_df.to_csv(excluded_path, index=False)
-            print(f"[OK] Excluded docs log saved: {excluded_path}")
-            print(f"    Excluded by year rule: {len(excluded_df)}")
-
-        df = df[~excluded_mask].copy().reset_index(drop=True)
-        df = df.drop(columns=['PublicationYear', 'CommentURL', 'DateEvidence'], errors='ignore')
-        print(f"[OK] Year filter applied: {pre_filter_count} -> {len(df)} documents")
-
-        if df.empty:
-            print("No documents remain after 2023+ year filter.")
-            exit()
 
     df.to_csv(os.path.join(OUTPUT_DIR, "corpus.csv"), index=False)
 
@@ -185,8 +134,8 @@ if __name__ == "__main__":
     )
 
     # HYBRID APPROACH: Statistical Filtering + Minimal Brand Stopwords
-    # - min_df=2: Word must appear in at least 2 documents (broader corpus, less restrictive)
-    # - max_df=0.90: Word appears in at most 90% of documents (allows broader terms)
+    # - min_df=3: Word must appear in at least 3 documents
+    # - max_df=1.0: Disabled to avoid prior c-TF-IDF instability
     # - brand_stopwords: Explicit removal of company/product names that statistically persist
     # 
     # This is more intelligent than pure statistical filtering and requires less manual curation
@@ -308,28 +257,6 @@ if __name__ == "__main__":
     # As per supervisor feedback: transparency in sampling process via
     # comprehensive metadata table listing all documents.
     # This table should appear in thesis appendix.
-    
-    def get_finder_comment(filepath):
-        """Read Finder comment via robust mdls+xattr lookup."""
-        return read_finder_comment(filepath)
-
-    def parse_url_and_year_from_comment(comment):
-        """Parse Finder comment and return best-effort (url, year)."""
-        if not comment:
-            return "", ""
-
-        cleaned = str(comment).strip().strip('"').strip("'")
-        cleaned = re.sub(r"\s+", " ", cleaned)
-
-        url_match = re.search(r"https?://\S+", cleaned)
-        url = url_match.group(0).rstrip(".,;)\"]") if url_match else ""
-
-        year_match = re.search(r"(20\d{2})(?!.*20\d{2})", cleaned)
-        year = year_match.group(1) if year_match else ""
-        if year and not (2000 <= int(year) <= 2026):
-            year = ""
-
-        return url, year
 
     def classify_document_type(filename, url):
         """Classify document type for appendix transparency."""
@@ -356,11 +283,9 @@ if __name__ == "__main__":
         """Extract publication year and source evidence.
         Returns tuple: (year, evidence_source)
         """
-        # Finder comment is the single source of truth for year.
         _, year_from_comment = parse_url_and_year_from_comment(comment)
         if year_from_comment:
             return year_from_comment, "finder_comment"
-
         return "", "missing"
 
     appendix_df = df[['Company', 'Level', 'FileName']].copy()
@@ -374,19 +299,15 @@ if __name__ == "__main__":
         axis=1
     )
     
-    # URL is sourced strictly from Finder comments.
+    # Extract URLs and publication years from comments
     comment_urls = full_comments.apply(lambda c: parse_url_and_year_from_comment(c)[0])
+    comment_years = full_comments.apply(lambda c: parse_url_and_year_from_comment(c)[1])
+    
     appendix_df['URL'] = comment_urls
-    year_evidence = df.apply(
-        lambda row: extract_publication_year_and_evidence(
-            os.path.join(BASE_DIR, row['Level'], row['Company'], row['FileName']),
-            appendix_df.loc[row.name, 'URL'],
-            full_comments.loc[row.name]
-        ),
-        axis=1
+    appendix_df['PublicationYear'] = comment_years
+    appendix_df['DateEvidence'] = comment_years.apply(
+        lambda y: "finder_comment" if y else "missing"
     )
-    appendix_df['PublicationYear'] = year_evidence.apply(lambda x: x[0])
-    appendix_df['DateEvidence'] = year_evidence.apply(lambda x: x[1])
     appendix_df['DocumentType'] = appendix_df.apply(
         lambda row: classify_document_type(row['FileName'], row['URL']),
         axis=1
@@ -467,19 +388,6 @@ if __name__ == "__main__":
 
     # Build a single audit trail across included and excluded documents.
     audit_frames = [selection_log_df.copy()]
-    if not year_excluded_df.empty:
-        year_excl = year_excluded_df.copy()
-        year_excl['FilePath'] = year_excl.apply(
-            lambda row: f"Thesis_Data_Mining/{row['Level']}/{row['Company']}/{row['FileName']}",
-            axis=1
-        )
-        year_excl['DocumentType'] = year_excl['FileName'].apply(lambda n: classify_document_type(n, ""))
-        year_excl['IncludedByYearRule'] = "No"
-        year_excl = year_excl[[
-            'Company', 'Level', 'FileName', 'FilePath', 'DocumentType', 'PublicationYear',
-            'DateEvidence', 'IncludedByYearRule', 'ExclusionReason', 'URL'
-        ]]
-        audit_frames.append(year_excl)
     if not excluded_low_rel_df.empty:
         audit_frames.append(excluded_low_rel_df)
 
@@ -498,8 +406,6 @@ if __name__ == "__main__":
     print(f"[OK] Low-relevance exclusions saved: {excluded_low_rel_path}")
     print(f"[OK] Unified corpus audit saved: {audit_path}")
     print(f"    Total documents: {len(appendix_df)}")
-    excluded_by_year = len(year_excluded_df)
-    print(f"    Excluded by 2023+ year rule: {excluded_by_year}")
     print(f"    Excluded in low-relevance folder: {len(excluded_low_rel_df)}")
     print(f"    Documents per company:")
     for company in appendix_df['Company'].unique():
