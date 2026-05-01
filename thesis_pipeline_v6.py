@@ -40,8 +40,8 @@ UMAP_MIN_DIST = 0.35
 HDBSCAN_MIN_CLUSTER_SIZE = 4
 HDBSCAN_MIN_SAMPLES = 1
 VECTORIZER_NGRAM_RANGE = (1, 2)
-VECTORIZER_MIN_DF = 3
-VECTORIZER_MAX_DF = 1.0  # Keep disabled to avoid prior c-TF-IDF instability
+VECTORIZER_MIN_DF = 1
+VECTORIZER_MAX_DF = 1.0  # Disabled; using KeyBERTInspired representation instead of c-TF-IDF
 TOPIC_MIN_TOPIC_SIZE = 5
 TOPIC_TOP_N_WORDS = 10
 TOPIC_TARGET_COUNT = 6
@@ -54,14 +54,14 @@ nltk.download("stopwords", quiet=True)
 nltk.download("wordnet", quiet=True)
 
 
-# HYBRID APPROACH (Statistical Filtering + Minimal Brand Stopwords)
-# Combine aggressive min_df/max_df statistical thresholds with targeted brand-name filtering.
-# This gives the best of both worlds: automatic noise filtering + explicit brand name removal.
-
-# Minimal safe stopword core:
-# Keep only explicit brand/product identifiers and obvious OCR/lemmatization artifacts.
-# Preserve concept-bearing discourse terms (e.g., governance, security, design, policy vocabulary)
-# so BERTopic can discover meaningful thematic differences naturally.
+# VECTORIZER APPROACH: Minimal Brand Stopwords + NLTK
+# - min_df=1: Include all terms (no silent filtering)
+# - NLTK stopwords: Standard English noise removal
+# - brand_stopwords: Explicit removal of company/product names
+# - BERTopic semantic embedding does the heavy lifting for clustering
+#
+# This gives BERTopic complete access to the corpus semantics while
+# explicitly filtering only known noise. All filtering decisions are transparent and justifiable.
 brand_stopwords = [
     # ========== Brand/Product names (filter branding noise) ==========
     'anthropic', 'microsoft', 'google', 'facebook', 'amazon',
