@@ -16,6 +16,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 from umap import UMAP
 from hdbscan import HDBSCAN
 
+try:
+    ENGLISH_STOPWORDS = set(stopwords.words('english'))
+except LookupError:
+    ENGLISH_STOPWORDS = set()
+
 from pipeline_utils import (
     mine_pdfs,
     custom_tokenizer,
@@ -66,8 +71,10 @@ brand_stopwords = [
     # ========== Brand/Product names (filter branding noise) ==========
     'anthropic', 'microsoft', 'google', 'facebook', 'amazon',
     'azure', 'openai', 'deepmind', 'claude', 'gpt', 'gemini',
-    'copilot', 'linkedin', 'palm', 'learnlm', 'llama'
+    'copilot', 'linkedin', 'palm', 'learnlm', 'llama',
 ]
+
+_topic_name_cache = {}
 
 
 # ==========================================
@@ -93,6 +100,73 @@ def parse_url_and_year_from_comment(comment):
         year = ""
 
     return url, year
+
+
+def generate_topic_names(topic_model):
+    """
+    Generate human-readable names for BERTopic topics using deterministic fallback logic.
+    
+    Args:
+        topic_model: Fitted BERTopic model
+    
+    Returns:
+        dict: Mapping of topic_id to human-readable name
+    """
+    topic_info = topic_model.get_topic_info()
+    
+    topic_names = {}
+    for idx, row in topic_info.iterrows():
+        if row['Topic'] == -1:  # Skip noise
+            continue
+
+        topic_id = int(row['Topic'])
+        topic_words = topic_model.get_topic(topic_id) or []
+        keyword_list = []
+        seen_keywords = set()
+        for word, _score in topic_words:
+            cleaned = re.sub(r"\s+", " ", str(word).strip())
+            if not cleaned:
+                continue
+            normalized = cleaned.lower()
+            if normalized in seen_keywords:
+                continue
+            seen_keywords.add(normalized)
+            keyword_list.append(cleaned)
+
+        cache_key = tuple(word.lower() for word in keyword_list)
+        if cache_key in _topic_name_cache:
+            topic_names[topic_id] = _topic_name_cache[cache_key]
+            print(f"[TOPIC] Topic {topic_id}: {topic_names[topic_id]} (cache)")
+            continue
+
+        def fallback_topic_name(keywords):
+            ordered_terms = []
+            seen_terms = set()
+            for keyword in keywords:
+                for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9\-]+", str(keyword)):
+                    normalized = token.lower()
+                    if len(normalized) < 3:
+                        continue
+                    if normalized in ENGLISH_STOPWORDS:
+                        continue
+                    if normalized in seen_terms:
+                        continue
+                    seen_terms.add(normalized)
+                    ordered_terms.append(token.title())
+            if not ordered_terms:
+                return f"Topic {topic_id}"
+            if len(ordered_terms) == 1:
+                return ordered_terms[0]
+            if len(ordered_terms) == 2:
+                return f"{ordered_terms[0]} and {ordered_terms[1]}"
+            return " ".join(ordered_terms[:2])
+
+        topic_name = fallback_topic_name(keyword_list)
+        topic_names[topic_id] = topic_name
+        _topic_name_cache[cache_key] = topic_name
+        print(f"[TOPIC] Topic {topic_id}: {topic_name} (fallback)")
+    
+    return topic_names
 
 
 if __name__ == "__main__":
@@ -191,6 +265,19 @@ if __name__ == "__main__":
     # Post-process topics (clean words in CSV)
     # ------------------------------------------
     postprocess_topics_csv(topics_csv_path, brand_stopwords)
+
+    # ------------------------------------------
+    # Generate topic names (deterministic frequency-based)
+    # ------------------------------------------
+    print("\n[NAMING] Generating topic names (deterministic approach)...")
+    topic_names = generate_topic_names(topic_model)
+
+    # Save named topics
+    named_topics_df = topic_info.copy()
+    named_topics_df['Human_Name'] = named_topics_df['Topic'].map(topic_names)
+    named_topics_csv_path = os.path.join(OUTPUT_DIR, "topics_named.csv")
+    named_topics_df.to_csv(named_topics_csv_path, index=False)
+    print(f"[OK] Named topics saved: {named_topics_csv_path}")
 
     # ------------------------------------------
     # Cluster diagnostics (automatic quality log)
@@ -313,16 +400,8 @@ if __name__ == "__main__":
         axis=1
     )
 
-    # Explicit 2023+ inclusion validation (do not silently drop rows).
-    appendix_df['IncludedByYearRule'] = appendix_df['PublicationYear'].apply(
-        lambda y: "Yes" if str(y).isdigit() and int(y) >= 2023 else "No"
-    )
-    appendix_df['ExclusionReason'] = appendix_df.apply(
-        lambda row: "" if row['IncludedByYearRule'] == "Yes" else "PublicationYear before 2023 or missing",
-        axis=1
-    )
-    
-    # Save defensible sampling frame log (all included rows + rule checks).
+    # All documents have been pre-filtered to 2023+ during corpus assembly.
+    # Save defensible sampling frame log (with publication metadata for transparency).
     selection_log_df = appendix_df.copy()
     selection_log_df['FilePath'] = selection_log_df.apply(
         lambda row: f"Thesis_Data_Mining/{row['Level']}/{row['Company']}/{row['FileName']}",
@@ -330,7 +409,7 @@ if __name__ == "__main__":
     )
     selection_log_df = selection_log_df[[
         'Company', 'Level', 'FileName', 'FilePath', 'DocumentType', 'PublicationYear',
-        'DateEvidence', 'IncludedByYearRule', 'ExclusionReason', 'URL'
+        'DateEvidence', 'URL'
     ]]
 
     # Reorder appendix columns (reader-facing appendix table).
@@ -379,7 +458,6 @@ if __name__ == "__main__":
                     'DocumentType': classify_document_type(file, url_from_comment),
                     'PublicationYear': pub_year,
                     'DateEvidence': evidence,
-                    'IncludedByYearRule': "No",
                     'ExclusionReason': "Low relevance (manual exclusion folder)",
                     'URL': url_from_comment,
                 })

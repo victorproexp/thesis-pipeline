@@ -4,6 +4,7 @@ import subprocess
 import plistlib
 import unicodedata
 import ast
+from collections import Counter
 
 import numpy as np
 import pandas as pd
@@ -20,6 +21,45 @@ from pyvis.network import Network
 
 
 lemmatizer = WordNetLemmatizer()
+
+try:
+    ENGLISH_STOPWORDS = set(stopwords.words("english"))
+except LookupError:
+    ENGLISH_STOPWORDS = set()
+
+
+def _fallback_topic_title(keywords):
+    term_counts = Counter()
+    phrase_counts = Counter()
+
+    for keyword in keywords:
+        cleaned = re.sub(r"\s+", " ", str(keyword).strip())
+        if not cleaned:
+            continue
+
+        phrase_counts[cleaned] += 1
+        for token in re.findall(r"[a-zA-Z0-9][a-zA-Z0-9\-]+", cleaned.lower()):
+            if len(token) < 3:
+                continue
+            if token in ENGLISH_STOPWORDS:
+                continue
+            term_counts[token] += 1
+
+    if not term_counts:
+        if phrase_counts:
+            return phrase_counts.most_common(1)[0][0].title()
+        return "Emerging Theme"
+
+    top_terms = [term.title() for term, _ in term_counts.most_common(2)]
+    if len(top_terms) == 1:
+        return top_terms[0]
+    if len(top_terms) == 2:
+        return f"{top_terms[0]} and {top_terms[1]}"
+    return " ".join(top_terms)
+
+
+def _generate_topic_title(keywords):
+    return _fallback_topic_title(keywords)
 
 
 def remove_urls(text: str) -> str:
@@ -439,6 +479,7 @@ def generate_knowledge_graph(df, topic_model, output_path):
             company,
             label=company,
             color=colors["node"],
+            shape="circle",
             size=size,
             font={"size": 18, "color": "white", "bold": True},
             title=f"{company}\n{doc_count} documents\n{total_words:,} words"
@@ -446,6 +487,7 @@ def generate_knowledge_graph(df, topic_model, output_path):
 
     topic_info = topic_model.get_topic_info()
     valid = topic_info[topic_info.Topic != -1]
+    topic_titles = {}
 
     for _, trow in valid.iterrows():
         topic_id = trow["Topic"]
@@ -472,7 +514,10 @@ def generate_knowledge_graph(df, topic_model, output_path):
 
         keyword_line = " · ".join([w for w, _ in deduped])
         values_line = f"⟨{', '.join(values_in_topic)}⟩" if values_in_topic else ""
-        label = f"T{topic_id}\n{keyword_line}"
+        if topic_id not in topic_titles:
+            topic_titles[topic_id] = _generate_topic_title([w for w, _ in deduped])
+
+        label = f"{topic_titles[topic_id]}\n{keyword_line}"
         if values_line:
             label += f"\n{values_line}"
 
@@ -481,6 +526,7 @@ def generate_knowledge_graph(df, topic_model, output_path):
             int(topic_id),
             label=label,
             color=TOPIC_COLOR,
+            shape="triangle",
             size=size,
             font={"size": 13, "color": "white", "multi": True},
             title=f"Topic {topic_id} ({doc_count} docs)\n" +
@@ -609,7 +655,7 @@ def generate_knowledge_graph(df, topic_model, output_path):
       <div><span style="color:#4285F4;">●</span> Google &nbsp;
            <span style="color:#00A4EF;">●</span> Microsoft &nbsp;
            <span style="color:#D97757;">●</span> Anthropic &nbsp;
-           <span style="color:#C4A7E7;">●</span> Topic</div>
+                     <span style="color:#C4A7E7;">▲</span> Topic</div>
       <div style="margin-top:6px;border-top:1px solid rgba(255,255,255,0.15);padding-top:6px;">
         Node size = discourse volume / doc count<br>
         Edge thickness = avg. probability × discourse share<br>
