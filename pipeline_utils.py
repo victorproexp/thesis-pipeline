@@ -836,7 +836,7 @@ def generate_sociotechnical_dashboard(output_dir):
         iframe {
             display: block;
             width: 100%;
-            height: 920px;
+            height: 800px;
             border: 0;
             background: var(--bg);
             margin: 0;
@@ -844,11 +844,11 @@ def generate_sociotechnical_dashboard(output_dir):
         }
 
         .heatmap-frame {
-            height: 1380px;
+            height: 1200px;
         }
 
         .graph-frame {
-            height: 920px;
+            height: 800px;
         }
 
         .synthesis {

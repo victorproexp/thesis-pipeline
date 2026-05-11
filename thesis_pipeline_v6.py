@@ -679,19 +679,12 @@ if __name__ == "__main__":
     # Legend
     html_parts.append('<div class="legend">')
     html_parts.append('<span style="background:rgba(255,50,50,0.15);border:1px solid #ff6b6b;"></span> ')
-    html_parts.append(f'<em>Absent</em> (&lt;{ABSENCE_THRESHOLD} per 1k tokens — expectational gap) &nbsp;&nbsp;')
+    html_parts.append(f'<em>Absent</em> (&lt;{ABSENCE_THRESHOLD} per 1k tokens) &nbsp;&nbsp;')
     html_parts.append('<span style="background:rgba(50,200,180,0.5);"></span> ')
-    html_parts.append('<em>Present</em> (color intensity = relative frequency)')
+    html_parts.append('<em>Present</em> (color intensity = relative lexical salience)')
     html_parts.append('</div>')
 
-    # Contextual note
-    html_parts.append('<div class="note">')
-    html_parts.append('<strong>Reading guide:</strong> Red-highlighted cells indicate terms ')
-    html_parts.append('functionally absent from a company\'s discourse — these are ')
-    html_parts.append('<em>expectational gaps</em> (Mahon, 2002) where corporate framing ')
-    html_parts.append('diverges from democratic public values (Marginson, 2011). ')
-    html_parts.append('Higher values indicate stronger discursive emphasis.')
-    html_parts.append('</div>')
+    # Contextual note (removed to avoid empty boxed area)
 
     html_parts.append('</body></html>')
 
