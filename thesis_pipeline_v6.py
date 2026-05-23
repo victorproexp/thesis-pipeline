@@ -1,5 +1,4 @@
 import os
-import re
 import random
 import numpy as np
 import pandas as pd
@@ -28,7 +27,11 @@ from pipeline_utils import (
     save_cluster_diagnostics,
     generate_knowledge_graph,
     generate_sociotechnical_dashboard,
-    read_finder_comment,
+    generate_topic_names,
+    build_appendix_metadata,
+    compute_values_term_frequency,
+    compute_topic_probability_by_company,
+    generate_company_values_heatmap,
 )
 
 # Corpus methodology is specified in the thesis text.
@@ -74,99 +77,10 @@ brand_stopwords = [
     'copilot', 'linkedin', 'palm', 'learnlm', 'llama',
 ]
 
-_topic_name_cache = {}
-
 
 # ==========================================
 # MAIN PIPELINE
 # ==========================================
-# Helper functions for metadata extraction
-def get_finder_comment(filepath):
-    return read_finder_comment(filepath)
-
-def parse_url_and_year_from_comment(comment):
-    if not comment:
-        return "", ""
-
-    cleaned = str(comment).strip().strip('"').strip("'")
-    cleaned = re.sub(r"\s+", " ", cleaned)
-
-    url_match = re.search(r"https?://\S+", cleaned)
-    url = url_match.group(0).rstrip(".,;)\"]") if url_match else ""
-
-    year_match = re.search(r"(20\d{2})(?!.*20\d{2})", cleaned)
-    year = year_match.group(1) if year_match else ""
-    if year and not (2000 <= int(year) <= 2026):
-        year = ""
-
-    return url, year
-
-
-def generate_topic_names(topic_model):
-    """
-    Generate human-readable names for BERTopic topics using deterministic fallback logic.
-    
-    Args:
-        topic_model: Fitted BERTopic model
-    
-    Returns:
-        dict: Mapping of topic_id to human-readable name
-    """
-    topic_info = topic_model.get_topic_info()
-    
-    topic_names = {}
-    for idx, row in topic_info.iterrows():
-        if row['Topic'] == -1:  # Skip noise
-            continue
-
-        topic_id = int(row['Topic'])
-        topic_words = topic_model.get_topic(topic_id) or []
-        keyword_list = []
-        seen_keywords = set()
-        for word, _score in topic_words:
-            cleaned = re.sub(r"\s+", " ", str(word).strip())
-            if not cleaned:
-                continue
-            normalized = cleaned.lower()
-            if normalized in seen_keywords:
-                continue
-            seen_keywords.add(normalized)
-            keyword_list.append(cleaned)
-
-        cache_key = tuple(word.lower() for word in keyword_list)
-        if cache_key in _topic_name_cache:
-            topic_names[topic_id] = _topic_name_cache[cache_key]
-            print(f"[TOPIC] Topic {topic_id}: {topic_names[topic_id]} (cache)")
-            continue
-
-        def fallback_topic_name(keywords):
-            ordered_terms = []
-            seen_terms = set()
-            for keyword in keywords:
-                for token in re.findall(r"[A-Za-z0-9][A-Za-z0-9\-]+", str(keyword)):
-                    normalized = token.lower()
-                    if len(normalized) < 3:
-                        continue
-                    if normalized in ENGLISH_STOPWORDS:
-                        continue
-                    if normalized in seen_terms:
-                        continue
-                    seen_terms.add(normalized)
-                    ordered_terms.append(token.title())
-            if not ordered_terms:
-                return f"Topic {topic_id}"
-            if len(ordered_terms) == 1:
-                return ordered_terms[0]
-            if len(ordered_terms) == 2:
-                return f"{ordered_terms[0]} and {ordered_terms[1]}"
-            return " ".join(ordered_terms[:2])
-
-        topic_name = fallback_topic_name(keyword_list)
-        topic_names[topic_id] = topic_name
-        _topic_name_cache[cache_key] = topic_name
-        print(f"[TOPIC] Topic {topic_id}: {topic_name} (fallback)")
-    
-    return topic_names
 
 
 if __name__ == "__main__":
@@ -344,132 +258,11 @@ if __name__ == "__main__":
     # As per supervisor feedback: transparency in sampling process via
     # comprehensive metadata table listing all documents.
     # This table should appear in thesis appendix.
-
-    def classify_document_type(filename, url):
-        """Classify document type for appendix transparency."""
-        fname = str(filename).lower()
-        link = str(url).lower()
-
-        if "youtube.com" in link or "transcript" in fname:
-            return "Transcript"
-        if "blog." in link or "/blog/" in link or "/news/" in link:
-            return "Blog Post"
-        if "arxiv.org" in link or re.match(r"^\d{4}\.\d{5}", str(filename)):
-            return "Research Paper"
-        if "whitepaper" in fname or "white-paper" in fname:
-            return "White Paper"
-        if "report" in fname:
-            return "Report"
-        if "policy" in fname:
-            return "Policy Document"
-        if "guide" in fname or "toolkit" in fname or "ebook" in fname or "e-book" in fname:
-            return "Guide/Toolkit"
-        return "Document"
-
-    def extract_publication_year_and_evidence(filepath, url, comment):
-        """Extract publication year and source evidence.
-        Returns tuple: (year, evidence_source)
-        """
-        _, year_from_comment = parse_url_and_year_from_comment(comment)
-        if year_from_comment:
-            return year_from_comment, "finder_comment"
-        return "", "missing"
-
-    appendix_df = df[['Company', 'Level', 'FileName']].copy()
-    appendix_df['WordCount'] = df['Raw_Text'].apply(lambda x: len(str(x).split()))
-
-    # Extract Finder comment (format: "URL YYYY")
-    full_comments = df.apply(
-        lambda row: get_finder_comment(
-            os.path.join(BASE_DIR, row['Level'], row['Company'], row['FileName'])
-        ),
-        axis=1
+    appendix_df, selection_log_df, excluded_low_rel_df, corpus_audit_df = build_appendix_metadata(
+        df,
+        BASE_DIR,
+        EXCLUDED_DIR,
     )
-    
-    # Extract URLs and publication years from comments
-    comment_urls = full_comments.apply(lambda c: parse_url_and_year_from_comment(c)[0])
-    comment_years = full_comments.apply(lambda c: parse_url_and_year_from_comment(c)[1])
-    
-    appendix_df['URL'] = comment_urls
-    appendix_df['PublicationYear'] = comment_years
-    appendix_df['DateEvidence'] = comment_years.apply(
-        lambda y: "finder_comment" if y else "missing"
-    )
-    appendix_df['DocumentType'] = appendix_df.apply(
-        lambda row: classify_document_type(row['FileName'], row['URL']),
-        axis=1
-    )
-
-    # All documents have been pre-filtered to 2023+ during corpus assembly.
-    # Save defensible sampling frame log (with publication metadata for transparency).
-    selection_log_df = appendix_df.copy()
-    selection_log_df['FilePath'] = selection_log_df.apply(
-        lambda row: f"Thesis_Data_Mining/{row['Level']}/{row['Company']}/{row['FileName']}",
-        axis=1
-    )
-    selection_log_df = selection_log_df[[
-        'Company', 'Level', 'FileName', 'FilePath', 'DocumentType', 'PublicationYear',
-        'DateEvidence', 'URL'
-    ]]
-
-    # Reorder appendix columns (reader-facing appendix table).
-    appendix_df = appendix_df[[
-        'Company', 'Level', 'FileName', 'DocumentType', 'PublicationYear',
-        'WordCount', 'URL'
-    ]]
-
-    # Document exclusions placed in Excluded_Documents_Low_Relevance.
-    def infer_company_from_name(filename):
-        name = str(filename).lower()
-        if 'google' in name:
-            return 'Google'
-        if 'microsoft' in name:
-            return 'Microsoft'
-        if 'anthropic' in name:
-            return 'Anthropic'
-        return 'Unknown_Company'
-
-    excluded_low_rel_rows = []
-    if os.path.isdir(EXCLUDED_DIR):
-        for root, _, files in os.walk(EXCLUDED_DIR):
-            for file in files:
-                if not file.lower().endswith('.pdf'):
-                    continue
-
-                path = os.path.join(root, file)
-                rel_path = os.path.relpath(path, ".")
-                comment = get_finder_comment(path)
-                url_from_comment, _ = parse_url_and_year_from_comment(comment)
-                pub_year, evidence = extract_publication_year_and_evidence(path, url_from_comment, comment)
-
-                path_parts = os.path.normpath(rel_path).split(os.sep)
-                level = "Unknown_Level"
-                company = infer_company_from_name(file)
-                if len(path_parts) >= 4:
-                    # Expected nested format: Excluded_Documents_Low_Relevance/Level/Company/file.pdf
-                    level = path_parts[-3]
-                    company = path_parts[-2]
-
-                excluded_low_rel_rows.append({
-                    'Company': company,
-                    'Level': level,
-                    'FileName': file,
-                    'FilePath': rel_path,
-                    'DocumentType': classify_document_type(file, url_from_comment),
-                    'PublicationYear': pub_year,
-                    'DateEvidence': evidence,
-                    'ExclusionReason': "Low relevance (manual exclusion folder)",
-                    'URL': url_from_comment,
-                })
-
-    excluded_low_rel_df = pd.DataFrame(excluded_low_rel_rows)
-
-    # Build a single audit trail across included and excluded documents.
-    audit_frames = [selection_log_df.copy()]
-    if not excluded_low_rel_df.empty:
-        audit_frames.append(excluded_low_rel_df)
-
-    corpus_audit_df = pd.concat(audit_frames, ignore_index=True)
     
     appendix_csv_path = os.path.join(OUTPUT_DIR, "appendix_corpus_metadata.csv")
     appendix_df.to_csv(appendix_csv_path, index=False)
@@ -496,8 +289,6 @@ if __name__ == "__main__":
     # VALUES TERM FREQUENCY EXPORT (per-company)
     # ------------------------------------------
     # Expanded vocabulary: Marginson democratic public values + van Dijck platform terms
-    from collections import Counter
-
     values_terms = [
         # Governance & oversight (Marginson / Mahon expectational gaps)
         'governance', 'transparency', 'accountability', 'autonomy',
@@ -508,30 +299,7 @@ if __name__ == "__main__":
         'safety', 'fairness', 'inclusion', 'access', 'trust',
         'wellbeing', 'diversity', 'participation',
     ]
-
-    values_rows = []
-    company_token_counts = {}  # Reuse for absence analysis
-
-    for company in df['Company'].unique():
-        if company == "Unknown_Company":
-            continue
-        company_docs = df[df['Company'] == company]['Processed_Text']
-        all_tokens = ' '.join(company_docs).split()
-        total_tokens = len(all_tokens)
-        token_counts = Counter(all_tokens)
-        company_token_counts[company] = (token_counts, total_tokens)
-
-        for term in values_terms:
-            count = token_counts.get(term, 0)
-            per_1k = round((count / total_tokens) * 1000, 2) if total_tokens > 0 else 0
-            values_rows.append({
-                'Company': company,
-                'Term': term,
-                'Count': count,
-                'Per1kTokens': per_1k
-            })
-
-    values_df = pd.DataFrame(values_rows)
+    values_df, company_token_counts = compute_values_term_frequency(df, values_terms)
     values_csv_path = os.path.join(OUTPUT_DIR, "values_term_frequency.csv")
     values_df.to_csv(values_csv_path, index=False)
     print(f"\n[OK] Values term frequency saved: {values_csv_path}")
@@ -547,35 +315,11 @@ if __name__ == "__main__":
     # Shows company-topic affinity beyond hard assignment counts
     # Captures soft clustering: a doc assigned to Topic 0 may still have
     # 30% probability for Topic 1, revealing latent thematic overlap
-
-    import ast
-
-    companies = [c for c in df['Company'].unique() if c != "Unknown_Company"]
-    n_topics = len(topic_model.get_topic_info()[topic_model.get_topic_info().Topic != -1])
-
-    prob_rows = []
-    for company in companies:
-        company_df = df[df['Company'] == company]
-        prob_matrix = []
-        for _, row in company_df.iterrows():
-            probs_val = row['Topic_Distribution']
-            if isinstance(probs_val, str):
-                probs_val = ast.literal_eval(probs_val)
-            prob_matrix.append(list(probs_val)[:n_topics])
-
-        avg_probs = np.mean(prob_matrix, axis=0)
-        for tid in range(n_topics):
-            prob_rows.append({
-                'Company': company,
-                'Topic': tid,
-                'Avg_Probability': round(float(avg_probs[tid]), 4),
-                'Doc_Count': int((company_df['Topic'] == tid).sum())
-            })
-
-    prob_df = pd.DataFrame(prob_rows)
+    prob_df = compute_topic_probability_by_company(df, topic_model)
     prob_csv_path = os.path.join(OUTPUT_DIR, "topic_probability_by_company.csv")
     prob_df.to_csv(prob_csv_path, index=False)
     print(f"\n[OK] Topic probability by company saved: {prob_csv_path}")
+    companies = [c for c in df['Company'].unique() if c != "Unknown_Company"]
     for company in companies:
         cp = prob_df[prob_df['Company'] == company]
         probs_str = ', '.join(f"T{r['Topic']}={r['Avg_Probability']:.2%}" for _, r in cp.iterrows())
@@ -616,81 +360,8 @@ if __name__ == "__main__":
     # Unified comparative visualization: rows=terms, columns=companies
     # Color intensity = normalized frequency (per 1k tokens)
     # Bridges BERTopic topics + values analysis into one thesis-ready figure
-
-    pivot = values_df.pivot(index='Term', columns='Company', values='Per1kTokens').fillna(0)
-    pivot = pivot[sorted(pivot.columns)]  # Alphabetical company order
-
-    # Sort terms by max frequency (most discussed first)
-    pivot['_max'] = pivot.max(axis=1)
-    pivot = pivot.sort_values('_max', ascending=False).drop(columns=['_max'])
-
-    # Generate HTML heatmap
-    html_parts = [
-        '<!DOCTYPE html><html><head><meta charset="utf-8">',
-        '<title>Company Positioning: Democratic Values Heatmap</title>',
-        '<style>',
-        'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; ',
-        '       background: #1a1a2e; color: #eee; padding: 4px 40px 40px; }',
-        'h1 { color: #FFD700; font-size: 1.4em; margin: 0; }',
-        'h2 { color: #87CEFA; font-size: 1.1em; font-weight: normal; margin: 2px 0 8px; }',
-        'table { border-collapse: collapse; margin: 8px 0; }',
-        'th, td { padding: 10px 18px; text-align: center; border: 1px solid #333; }',
-        'th { background: #16213e; color: #FFD700; font-weight: 600; }',
-        'th.term { text-align: left; min-width: 140px; }',
-        'td.term { text-align: left; font-weight: 500; color: #ccc; }',
-        'td.absent { color: #ff6b6b; font-style: italic; }',
-        '.legend { margin-top: 20px; font-size: 0.85em; color: #888; }',
-        '.legend span { display: inline-block; width: 18px; height: 18px; ',
-        '               vertical-align: middle; margin-right: 4px; border-radius: 3px; }',
-        '.note { margin-top: 30px; padding: 15px; background: #16213e; ',
-        '        border-left: 3px solid #FFD700; font-size: 0.9em; }',
-        '</style></head><body>',
-        '<h1>Company Positioning: Democratic Values Term Frequency</h1>',
-        '<h2>Per 1,000 tokens (normalized by company corpus size)</h2>',
-        '<table><tr><th class="term">Value Term</th>',
-    ]
-
-    for col in pivot.columns:
-        html_parts.append(f'<th>{col}</th>')
-    html_parts.append('</tr>')
-
-    # Find global max for color scaling
-    global_max = pivot.values.max()
-
-    for term, row in pivot.iterrows():
-        html_parts.append(f'<tr><td class="term">{term}</td>')
-        for company in pivot.columns:
-            val = row[company]
-            if val < ABSENCE_THRESHOLD:
-                html_parts.append(f'<td class="absent" style="background:rgba(255,50,50,0.15);">{val:.2f}</td>')
-            else:
-                intensity = val / global_max if global_max > 0 else 0
-                r_c = int(30 + 50 * (1 - intensity))
-                g_c = int(80 + 175 * intensity)
-                b_c = int(120 + 80 * intensity)
-                html_parts.append(
-                    f'<td style="background:rgba({r_c},{g_c},{b_c},0.5); '
-                    f'font-weight:{600 if intensity > 0.5 else 400};">{val:.2f}</td>'
-                )
-        html_parts.append('</tr>')
-
-    html_parts.append('</table>')
-
-    # Legend
-    html_parts.append('<div class="legend">')
-    html_parts.append('<span style="background:rgba(255,50,50,0.15);border:1px solid #ff6b6b;"></span> ')
-    html_parts.append(f'<em>Absent</em> (&lt;{ABSENCE_THRESHOLD} per 1k tokens) &nbsp;&nbsp;')
-    html_parts.append('<span style="background:rgba(50,200,180,0.5);"></span> ')
-    html_parts.append('<em>Present</em> (color intensity = relative lexical salience)')
-    html_parts.append('</div>')
-
-    # Contextual note (removed to avoid empty boxed area)
-
-    html_parts.append('</body></html>')
-
     heatmap_path = os.path.join(OUTPUT_DIR, "company_values_heatmap.html")
-    with open(heatmap_path, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(html_parts))
+    generate_company_values_heatmap(values_df, heatmap_path, ABSENCE_THRESHOLD)
     print(f"\n[OK] Company positioning heatmap saved: {heatmap_path}")
 
     # ------------------------------------------
