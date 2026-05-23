@@ -101,7 +101,7 @@ def parse_url_and_year_from_comment(comment):
     cleaned = re.sub(r"\s+", " ", cleaned)
 
     url_match = re.search(r"https?://\S+", cleaned)
-    url = url_match.group(0).rstrip(".,;)"]") if url_match else ""
+    url = url_match.group(0).rstrip(".,;)]") if url_match else ""
 
     year_match = re.search(r"(20\d{2})(?!.*20\d{2})", cleaned)
     year = year_match.group(1) if year_match else ""
